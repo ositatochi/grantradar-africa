@@ -36,8 +36,15 @@ class SourceRunAdmin(ModelAdmin):
 
 @admin.register(RawDocument)
 class RawDocumentAdmin(ModelAdmin):
-    list_display = ("source", "canonical_url", "status_code", "content_hash", "fetched_at")
-    list_filter = ("source", "status_code")
+    list_display = (
+        "source",
+        "canonical_url",
+        "status_code",
+        "processing_status",
+        "content_hash",
+        "fetched_at",
+    )
+    list_filter = ("source", "status_code", "processing_status")
     search_fields = ("url", "canonical_url", "content_hash")
     readonly_fields = (
         "source",
@@ -50,6 +57,9 @@ class RawDocumentAdmin(ModelAdmin):
         "etag",
         "last_modified",
         "fetched_at",
+        "processing_status",
+        "processed_at",
+        "processing_error",
     )
     exclude = ("compressed_content",)
 

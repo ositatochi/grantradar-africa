@@ -89,7 +89,7 @@ module = ["celery", "celery.*"]
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
-module = ["apps.crawler.tasks"]
+module = ["apps.crawler.tasks", "apps.pipeline.tasks"]
 disable_error_code = ["untyped-decorator"]
 
 [tool.django-stubs]

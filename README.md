@@ -4,7 +4,7 @@ GrantRadar Africa is a free platform for finding and tracking funding opportunit
 
 ## Status
 
-Phase 2 is complete: scheduled Scrapy crawls, RSS/Atom, JSON API, HTML-list and sitemap adapters, compressed snapshots, and source health tracking are in place. Extraction and public discovery are later phases.
+Phase 3 is complete: scheduled source crawls store compressed snapshots, and a rule-based pipeline extracts and normalizes opportunities, deduplicates records, scores confidence, and tracks review and expiry. Extracted opportunities remain unverified until an admin explicitly verifies them. Public discovery is the next phase.
 
 ## Requirements
 

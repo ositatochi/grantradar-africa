@@ -111,4 +111,7 @@ def crawl_source(source_id: int) -> int | None:
     )
     if run.records_found == 0:
         logger.warning("Source returned zero records", extra={"source_id": source_id})
+    from apps.pipeline.tasks import process_pending_documents
+
+    process_pending_documents.delay(source_id=source_id, source_run_id=run.pk)
     return run.records_found
