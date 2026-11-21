@@ -48,6 +48,12 @@ tests/                    Cross-app and integration tests
 
 The crawler must store factual fields, short original summaries, and source links—not republish full copyrighted source text. AI extraction is a fallback only and must be schema-validated, content-hash cached, and budget limited.
 
+## Phase 1 data foundation
+
+The initial schema separates reference taxonomies, funders, opportunities, monitored sources, crawl runs, and raw snapshots. User-facing saved searches, alerts, bookmarks, pipeline items, teams, API tokens, and audit events are represented in the schema for later phases; their workflows are not active yet.
+
+Run `python manage.py seed_reference_data` to load the offline ISO country/currency data and the starter SDG, sector, theme, and applicant-type taxonomies. Africa is pre-tagged; other countries are available for eligibility mapping and can be assigned a region in admin. Add monitored sources to `sources.yaml`, then load them with `python manage.py load_sources`.
+
 ## Trust and security boundaries
 
 - User-submitted URLs and discovered links are untrusted input. Fetchers must block private/internal addresses and re-check redirects.
@@ -58,4 +64,4 @@ The crawler must store factual fields, short original summaries, and source link
 
 ## Phased implementation
 
-The full phase plan is in `PROJECT_SPEC.md`. Phase 0 establishes this structure and local services; domain models and seed data begin in Phase 1. Later phases add crawling, extraction, search, accounts, alerts, and production hardening.
+The full phase plan is in `PROJECT_SPEC.md`. Phase 0 established the repository and local services. Phase 1 adds the domain models, reference data, and admin workflow. Later phases add crawling, extraction, search, public pages, alerts, and production hardening.

@@ -7,7 +7,7 @@ check: lint format test
 
 lint:
 	uv run ruff check .
-	uv run mypy grantradar
+	uv run mypy grantradar apps
 
 format:
 	uv run ruff format --check .
