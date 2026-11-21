@@ -1,0 +1,25 @@
+<article class="opportunity-card">
+  <div class="card-heading">
+    <div>
+      <p class="eyebrow">{{ opportunity.get_opportunity_type_display }}</p>
+      <h3><a href="{{ opportunity.get_absolute_url }}">{{ opportunity.title }}</a></h3>
+      <p class="muted">
+        {% if opportunity.funder %}<a href="{% url 'search:funder-detail' opportunity.funder.slug %}">{{ opportunity.funder.name }}</a>
+        {% else %}{{ opportunity.funder_name|default:"Funder not listed" }}{% endif %}
+      </p>
+    </div>
+    <span class="status status-{{ opportunity.status }}">{{ opportunity.get_status_display }}</span>
+  </div>
+  {% if opportunity.summary %}
+    <p>{{ opportunity.summary }}</p>
+  {% elif opportunity.description_snippet %}
+    <p>{{ opportunity.description_snippet|truncatewords:35 }}</p>
+  {% endif %}
+  <dl class="card-facts">
+    <div><dt>Deadline</dt><dd>{% if opportunity.rolling %}Rolling{% elif opportunity.deadline_date %}{{ opportunity.deadline_date|date:"j M Y" }}{% else %}Not stated{% endif %}</dd></div>
+    <div><dt>Last verified</dt><dd>{{ opportunity.date_last_verified|date:"j M Y" }}</dd></div>
+  </dl>
+  <a class="source-link" href="{{ opportunity.official_source_url }}" target="_blank" rel="noopener noreferrer">
+    Verify at official source
+  </a>
+</article>

@@ -1,0 +1,45 @@
+{% extends "search/base.html" %}
+
+{% block document_title %}Search funding opportunities | GrantRadar Africa{% endblock %}
+{% block meta_description %}Filter verified grants and funding calls by country, sector, funder, applicant type, deadline, and amount.{% endblock %}
+{% block robots %}noindex,follow{% endblock %}
+{% block content %}
+  <header class="page-heading">
+    <p class="eyebrow">Explore funding</p>
+    <h1>Search opportunities</h1>
+    <p>Only verified listings are shown. Follow each official source link to confirm details before applying.</p>
+  </header>
+
+  <div class="search-layout">
+    <aside class="filter-panel" aria-label="Search filters">
+      <form method="get" action="{% url 'search:opportunity-list' %}">
+        {% for field in form %}
+          <div class="form-field{% if field.field.widget.input_type == 'checkbox' %} checkbox-field{% endif %}">
+            {% if field.field.widget.input_type == "checkbox" %}
+              {{ field }}<label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {% else %}
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}
+            {% endif %}
+            {% for error in field.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+          </div>
+        {% endfor %}
+        {% for error in form.non_field_errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+        <button class="button button-full" type="submit">Apply filters</button>
+      </form>
+    </aside>
+    <section class="results-panel" aria-label="Search results">
+      {% if warning %}<p class="notice" role="status">{{ warning }}</p>{% endif %}
+      <p class="result-count">
+        {% if page_obj.paginator.count == 1 %}1 opportunity{% else %}{{ page_obj.paginator.count }} opportunities{% endif %}
+      </p>
+      <div class="card-grid">
+        {% for opportunity in page_obj %}
+          {% include "search/_opportunity_card.html" %}
+        {% empty %}
+          <p class="empty-state">No verified opportunities match these filters. Try broadening your search.</p>
+        {% endfor %}
+      </div>
+      {% include "search/_pagination.html" %}
+    </section>
+  </div>
+{% endblock %}

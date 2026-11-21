@@ -7,6 +7,8 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import F, Q
+from django.urls import reverse
+from django.utils.text import slugify
 
 from apps.core.models import (
     ApplicantType,
@@ -93,7 +95,7 @@ class Opportunity(TimeStampedModel):
     )
     sectors = models.ManyToManyField(Sector, blank=True, related_name="opportunities")
     themes = models.ManyToManyField(Theme, blank=True, related_name="opportunities")
-    co_funding_required = models.BooleanField(default=False)
+    co_funding_required = models.BooleanField(null=True, blank=True, default=None)
     eligibility_notes = models.TextField(blank=True)
     how_to_apply = models.TextField(blank=True)
     application_url = models.URLField(blank=True)
@@ -167,6 +169,12 @@ class Opportunity(TimeStampedModel):
 
     def __str__(self) -> str:
         return self.title
+
+    def get_absolute_url(self) -> str:
+        return reverse(
+            "search:opportunity-detail",
+            kwargs={"pk": self.pk, "slug": slugify(self.title)},
+        )
 
 
 class OpportunitySource(models.Model):

@@ -1,0 +1,24 @@
+{% extends "search/base.html" %}
+
+{% block document_title %}Funder directory | GrantRadar Africa{% endblock %}
+{% block meta_description %}Explore funders and verified funding opportunities across Africa.{% endblock %}
+{% block content %}
+  <header class="page-heading">
+    <p class="eyebrow">Who funds the work</p>
+    <h1>Funder directory</h1>
+    <p>Browse funders with current or archived verified opportunities.</p>
+  </header>
+  <div class="funder-grid">
+    {% for funder in page_obj %}
+      <article class="funder-card">
+        <p class="eyebrow">{{ funder.get_funder_type_display }}</p>
+        <h2><a href="{% url 'search:funder-detail' funder.slug %}">{{ funder.name }}</a></h2>
+        {% if funder.description %}<p>{{ funder.description|truncatewords:30 }}</p>{% endif %}
+        <p class="muted">{{ funder.opportunity_count }} verified opportunities</p>
+      </article>
+    {% empty %}
+      <p class="empty-state">No funders with verified opportunities are listed yet.</p>
+    {% endfor %}
+  </div>
+  {% include "search/_pagination.html" %}
+{% endblock %}

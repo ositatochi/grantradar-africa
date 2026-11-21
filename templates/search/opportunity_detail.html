@@ -1,0 +1,94 @@
+{% extends "search/base.html" %}
+
+{% block document_title %}{{ opportunity.title }} | GrantRadar Africa{% endblock %}
+{% block meta_description %}{{ opportunity.summary|default:opportunity.description_snippet|truncatewords:28 }}{% endblock %}
+{% block og_title %}{{ opportunity.title }}{% endblock %}
+{% block og_description %}{{ opportunity.summary|default:opportunity.description_snippet|truncatewords:28 }}{% endblock %}
+{% block content %}
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <a href="{% url 'search:home' %}">Home</a><span aria-hidden="true">/</span>
+    <a href="{% url 'search:opportunity-list' %}">Opportunities</a><span aria-hidden="true">/</span>
+    <span>{{ opportunity.title }}</span>
+  </nav>
+  <article class="detail-page">
+    <header class="detail-heading">
+      <p class="eyebrow">{{ opportunity.get_opportunity_type_display }}</p>
+      <h1>{{ opportunity.title }}</h1>
+      <p class="muted">
+        {% if opportunity.funder %}
+          <a href="{% url 'search:funder-detail' opportunity.funder.slug %}">{{ opportunity.funder.name }}</a>
+        {% else %}
+          {{ opportunity.funder_name|default:"Funder not listed" }}
+        {% endif %}
+      </p>
+      <span class="status status-{{ opportunity.status }}">{{ opportunity.get_status_display }}</span>
+      <a class="button source-button" href="{{ opportunity.official_source_url }}" target="_blank" rel="noopener noreferrer">
+        View official opportunity
+      </a>
+      <p class="verification-note">Last verified {{ opportunity.date_last_verified|date:"j F Y" }}. Always confirm current requirements with the funder.</p>
+    </header>
+
+    <div class="detail-grid">
+      <section class="detail-main">
+        {% if opportunity.summary %}<h2>Overview</h2><p>{{ opportunity.summary }}</p>{% endif %}
+        {% if opportunity.description_snippet %}<h2>Details</h2><p>{{ opportunity.description_snippet }}</p>{% endif %}
+        {% if opportunity.eligibility_notes %}<h2>Eligibility</h2><p>{{ opportunity.eligibility_notes|linebreaksbr }}</p>{% endif %}
+        {% if opportunity.how_to_apply %}<h2>How to apply</h2><p>{{ opportunity.how_to_apply|linebreaksbr }}</p>{% endif %}
+        {% if opportunity.application_url %}
+          <p><a class="source-link" href="{{ opportunity.application_url }}" target="_blank" rel="noopener noreferrer">Open application page</a></p>
+        {% endif %}
+        <section class="report-panel">
+          <h2>Spot an error?</h2>
+          <p>Tell us what may have changed so the listing can be reviewed.</p>
+          <form method="post" action="{% url 'search:report-error' opportunity.pk opportunity.title|slugify %}">
+            {% csrf_token %}
+            {{ error_form.description.label_tag }}
+            {{ error_form.description }}
+            {% for error in error_form.description.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+            <button class="button button-secondary" type="submit">Report an error</button>
+          </form>
+        </section>
+      </section>
+      <aside class="facts-panel">
+        <h2>At a glance</h2>
+        <dl class="facts-list">
+          <div><dt>Deadline</dt><dd>{% if opportunity.rolling %}Rolling{% elif opportunity.deadline_date %}{{ opportunity.deadline_date|date:"j F Y" }}{% else %}Not stated{% endif %}</dd></div>
+          <div><dt>Funding amount</dt><dd>
+            {% if opportunity.amount_min or opportunity.amount_max %}
+              {{ opportunity.currency.symbol|default:opportunity.currency.code }}{{ opportunity.amount_min|default:"0" }}{% if opportunity.amount_max %}–{{ opportunity.amount_max }}{% endif %}
+            {% else %}Not stated{% endif %}
+          </dd></div>
+          <div><dt>Funder type</dt><dd>{% if opportunity.funder %}{{ opportunity.funder.get_funder_type_display }}{% else %}Not stated{% endif %}</dd></div>
+          <div><dt>Language</dt><dd>{{ opportunity.language|upper }}</dd></div>
+          <div><dt>Matching funds</dt><dd>{% if opportunity.co_funding_required %}Required{% elif opportunity.co_funding_required == False %}Not required{% else %}Not stated{% endif %}</dd></div>
+          <div><dt>Eligible countries</dt><dd>{% for country in opportunity.eligible_countries.all %}{{ country.name }}{% if not forloop.last %}, {% endif %}{% empty %}Not restricted in the listing{% endfor %}</dd></div>
+          <div><dt>Applicant types</dt><dd>{% for applicant in opportunity.applicant_types.all %}{{ applicant.name }}{% if not forloop.last %}, {% endif %}{% empty %}Not stated{% endfor %}</dd></div>
+          <div><dt>Sectors</dt><dd>{% for sector in opportunity.sectors.all %}{{ sector.name }}{% if not forloop.last %}, {% endif %}{% empty %}Not classified{% endfor %}</dd></div>
+          <div><dt>Themes</dt><dd>{% for theme in opportunity.themes.all %}{{ theme.name }}{% if not forloop.last %}, {% endif %}{% empty %}None listed{% endfor %}</dd></div>
+        </dl>
+        <h2>Official source</h2>
+        <p><a class="source-link" href="{{ opportunity.official_source_url }}" target="_blank" rel="noopener noreferrer">{{ opportunity.source_name|default:"Open source page" }}</a></p>
+        {% if opportunity.source_links.all %}
+          <h2>Also seen on</h2>
+          <ul class="source-list">
+            {% for source_link in opportunity.source_links.all %}
+              {% if source_link.source_url != opportunity.official_source_url %}
+                <li><a href="{{ source_link.source_url }}" target="_blank" rel="noopener noreferrer">{{ source_link.source.name }}</a></li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </aside>
+    </div>
+  </article>
+  {% if similar_opportunities %}
+    <section class="content-section">
+      <div class="section-heading"><div><p class="eyebrow">Related funding</p><h2>Similar opportunities</h2></div></div>
+      <div class="card-grid">
+        {% for opportunity in similar_opportunities %}
+          {% include "search/_opportunity_card.html" %}
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+{% endblock %}

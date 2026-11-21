@@ -1,0 +1,29 @@
+{% extends "search/base.html" %}
+
+{% block document_title %}{{ funder.name }} | GrantRadar Africa{% endblock %}
+{% block meta_description %}View verified funding opportunities from {{ funder.name }} and follow the official source links.{% endblock %}
+{% block og_title %}{{ funder.name }}{% endblock %}
+{% block content %}
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <a href="{% url 'search:home' %}">Home</a><span aria-hidden="true">/</span>
+    <a href="{% url 'search:funder-list' %}">Funders</a><span aria-hidden="true">/</span>
+    <span>{{ funder.name }}</span>
+  </nav>
+  <header class="page-heading">
+    <p class="eyebrow">{{ funder.get_funder_type_display }}</p>
+    <h1>{{ funder.name }}</h1>
+    {% if funder.description %}<p>{{ funder.description }}</p>{% endif %}
+    {% if funder.website %}<a class="source-link" href="{{ funder.website }}" target="_blank" rel="noopener noreferrer">Visit official website</a>{% endif %}
+  </header>
+  <section class="content-section">
+    <div class="section-heading"><div><p class="eyebrow">Verified calls</p><h2>Opportunities from {{ funder.name }}</h2></div></div>
+    <div class="card-grid">
+      {% for opportunity in page_obj %}
+        {% include "search/_opportunity_card.html" %}
+      {% empty %}
+        <p class="empty-state">No verified opportunities from this funder are currently listed.</p>
+      {% endfor %}
+    </div>
+    {% include "search/_pagination.html" %}
+  </section>
+{% endblock %}
