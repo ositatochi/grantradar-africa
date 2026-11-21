@@ -6,7 +6,9 @@ import logging
 import re
 from datetime import date, timedelta
 from decimal import Decimal
+from functools import partial
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import Q
@@ -120,6 +122,23 @@ def expire_opportunities() -> int:
     today = timezone.localdate()
     closing_soon_through = today + timedelta(days=14)
     verified = Opportunity.objects.exclude(status=Opportunity.Status.UNVERIFIED)
+    changed_ids = list(
+        verified.filter(
+            Q(
+                status__in=[Opportunity.Status.OPEN, Opportunity.Status.CLOSING_SOON],
+                deadline_date__lt=today,
+            )
+            | Q(
+                status=Opportunity.Status.OPEN,
+                deadline_date__gte=today,
+                deadline_date__lte=closing_soon_through,
+            )
+            | Q(
+                status=Opportunity.Status.CLOSING_SOON,
+                deadline_date__gt=closing_soon_through,
+            )
+        ).values_list("pk", flat=True)
+    )
     closed = verified.filter(
         status__in=[Opportunity.Status.OPEN, Opportunity.Status.CLOSING_SOON],
         deadline_date__lt=today,
@@ -133,6 +152,11 @@ def expire_opportunities() -> int:
         status=Opportunity.Status.CLOSING_SOON,
         deadline_date__gt=closing_soon_through,
     ).update(status=Opportunity.Status.OPEN)
+    if settings.MEILI_URL:
+        from apps.search.tasks import sync_opportunity
+
+        for opportunity_id in changed_ids:
+            transaction.on_commit(partial(sync_opportunity.delay, opportunity_id))
     return closed
 
 

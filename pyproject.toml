@@ -92,5 +92,21 @@ ignore_missing_imports = true
 module = ["apps.crawler.tasks", "apps.pipeline.tasks"]
 disable_error_code = ["untyped-decorator"]
 
+[[tool.mypy.overrides]]
+module = ["apps.search.tasks"]
+disable_error_code = ["untyped-decorator"]
+
+[[tool.mypy.overrides]]
+module = ["apps.search.views"]
+disable_error_code = ["untyped-decorator", "type-arg"]
+
+[[tool.mypy.overrides]]
+module = ["apps.search.sitemaps"]
+disable_error_code = ["type-arg"]
+
+[[tool.mypy.overrides]]
+module = ["django_ratelimit.decorators", "django_ratelimit.*"]
+ignore_missing_imports = true
+
 [tool.django-stubs]
 django_settings_module = "grantradar.settings"

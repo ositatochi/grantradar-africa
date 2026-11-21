@@ -4,7 +4,7 @@ GrantRadar Africa is a free platform for finding and tracking funding opportunit
 
 ## Status
 
-Phase 3 is complete: scheduled source crawls store compressed snapshots, and a rule-based pipeline extracts and normalizes opportunities, deduplicates records, scores confidence, and tracks review and expiry. Extracted opportunities remain unverified until an admin explicitly verifies them. Public discovery is the next phase.
+Phase 4 is complete: the public site provides verified opportunity search, filters, opportunity and funder pages, SEO metadata, sitemaps, and an offline-capable PWA shell. Meilisearch powers full-text search; when it is unavailable, the site reports the outage and uses a database keyword search. Only records with a verification date and official source URL are public. Bookmarks and “most saved” are deferred until Phase 5.
 
 ## Requirements
 
@@ -42,6 +42,11 @@ Phase 3 is complete: scheduled source crawls store compressed snapshots, and a r
 
 7. For local Playwright-backed sources, install Chromium with `uv run playwright install chromium`.
 8. Run checks locally with `uv sync --all-groups` followed by `make check`. Pytest uses an in-memory SQLite database; the application and Compose stack use PostgreSQL.
+9. After configuring `MEILI_URL` and `MEILI_MASTER_KEY`, build or refresh the public search index with:
+
+   ```powershell
+   docker compose exec django uv run python manage.py reindex_opportunities
+   ```
 
 Celery Beat schedules enabled source crawls every 15 minutes; the configured crawl frequency determines which sources are due. To enable the separate Playwright worker for JavaScript-rendered sources:
 

@@ -1,0 +1,85 @@
+{% extends "search/base.html" %}
+
+{% block document_title %}Find funding for your work | GrantRadar Africa{% endblock %}
+{% block meta_description %}Search verified grants and funding opportunities for organisations and individuals across Africa, with a focus on Nigeria.{% endblock %}
+{% block content %}
+  <section class="hero">
+    <p class="eyebrow">Funding, made easier to find</p>
+    <h1>Find opportunities for the work that matters.</h1>
+    <p>Browse verified funding calls across Africa. Each listing links to its official source so you can confirm eligibility and deadlines.</p>
+    <form class="hero-search" action="{% url 'search:opportunity-list' %}" method="get">
+      <label class="sr-only" for="home-search">Search opportunities</label>
+      <input id="home-search" name="q" type="search" placeholder="Try climate, education, or Nigeria">
+      <button type="submit">Search funding</button>
+    </form>
+    <div class="quick-links">
+      <a href="{% url 'search:opportunity-list' %}?country={{ nigeria_id }}">Open to Nigeria</a>
+      <a href="{% url 'search:opportunity-list' %}?region=Africa">Africa-wide</a>
+      <a href="{% url 'search:opportunity-list' %}?status=rolling">Rolling calls</a>
+    </div>
+  </section>
+
+  <section class="content-section">
+    <div class="section-heading">
+      <div><p class="eyebrow">Recently checked</p><h2>New today</h2></div>
+      <a href="{% url 'search:opportunity-list' %}?sort=newest">Browse all</a>
+    </div>
+    <div class="card-grid">
+      {% for opportunity in new_today %}
+        {% include "search/_opportunity_card.html" %}
+      {% empty %}
+        <p class="empty-state">No newly verified opportunities today. Check back soon or browse all current calls.</p>
+      {% endfor %}
+    </div>
+  </section>
+
+  {% for window in closing_by_window %}
+    <section class="content-section">
+      <div class="section-heading">
+        <div><p class="eyebrow">Plan ahead</p><h2>Closing in {{ window.days }} days</h2></div>
+        <a href="{% url 'search:opportunity-list' %}?deadline_after={{ today|date:'Y-m-d' }}&amp;deadline_before={{ window.end|date:'Y-m-d' }}">See all</a>
+      </div>
+      <div class="card-grid">
+        {% for opportunity in window.opportunities %}
+          {% include "search/_opportunity_card.html" %}
+        {% empty %}
+          <p class="empty-state">No verified calls in this deadline window.</p>
+        {% endfor %}
+      </div>
+    </section>
+  {% endfor %}
+
+  <section class="content-section split-sections">
+    <div>
+      <div class="section-heading"><div><p class="eyebrow">Eligibility</p><h2>Open to Nigeria</h2></div></div>
+      <div class="card-grid">
+        {% for opportunity in nigeria_opportunities %}
+          {% include "search/_opportunity_card.html" %}
+        {% empty %}
+          <p class="empty-state">No verified calls are listed for Nigeria yet.</p>
+        {% endfor %}
+      </div>
+    </div>
+    <div>
+      <div class="section-heading"><div><p class="eyebrow">Across the continent</p><h2>Africa-wide</h2></div></div>
+      <div class="card-grid">
+        {% for opportunity in africa_opportunities %}
+          {% include "search/_opportunity_card.html" %}
+        {% empty %}
+          <p class="empty-state">No verified Africa-wide calls are listed yet.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section class="content-section">
+    <div class="section-heading"><div><p class="eyebrow">Flexible deadlines</p><h2>Rolling opportunities</h2></div></div>
+    <div class="card-grid">
+      {% for opportunity in rolling_opportunities %}
+        {% include "search/_opportunity_card.html" %}
+      {% empty %}
+        <p class="empty-state">No verified rolling opportunities are listed yet.</p>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}

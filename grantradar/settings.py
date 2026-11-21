@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sitemaps",
     "apps.accounts",
     "apps.core",
     "apps.funders",
@@ -38,7 +39,7 @@ INSTALLED_APPS = [
     "apps.tracker",
     "apps.teams",
     "apps.api",
-    "apps.search",
+    "apps.search.apps.SearchConfig",
     "apps.resources",
     "apps.analytics",
 ]
@@ -119,6 +120,8 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+MEILI_URL = os.environ.get("MEILI_URL", "")
+MEILI_MASTER_KEY = os.environ.get("MEILI_MASTER_KEY", "")
 
 CELERY_BROKER_URL = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
 CELERY_RESULT_BACKEND = os.environ.get(

@@ -64,6 +64,14 @@ The initial `sources.yaml` feed URLs were checked for successful HTTP responses 
 
 The pipeline extracts structured JSON API records and HTML detail pages from stored snapshots, sanitizes text, parses English, French, Portuguese, and Arabic deadlines, and declines ambiguous numeric dates. It normalizes source URLs, links fuzzy duplicates to their additional sources, assigns taxonomy tags and a confidence score, and stores new records as unverified. Admins can filter low-confidence records and explicitly verify opportunities; only verified records are automatically updated as deadlines approach or pass. AI-backed extraction is deferred.
 
+## Phase 4 public discovery
+
+The public home page, opportunity search/detail pages, and funder directory/detail pages use Django templates and expose only opportunities with a verification date, a non-unverified status, and an official source URL. Search filters cover country/region, sector, theme, funder, funder type, opportunity and applicant type, currency, language, status, deadline, USD amount, and matching-funds requirements. Country filters also include records with no country restrictions; these records are labeled as unrestricted rather than claiming confirmed country eligibility.
+
+Meilisearch stores a denormalized public index. Opportunity saves and deletes queue asynchronous index updates, with bounded retries when Meilisearch is unreachable. The `reindex_opportunities` management command configures the index and rebuilds it from verified database records. Search rechecks Meilisearch hits against the database visibility and filter rules. If the service or index is unavailable, the page displays a notice and falls back to basic database keyword search.
+
+Public pages include canonical and Open Graph metadata, `robots.txt`, and an XML sitemap. The PWA shell caches only its static stylesheet, icon, and offline page; it never caches opportunity pages that could contain stale deadlines. “Most saved” is deferred until bookmarks are implemented in Phase 5. The matching-funds field is tri-state so unknown extraction data is not presented as an explicit “no matching funds required.”
+
 ## Trust and security boundaries
 
 - User-submitted URLs and discovered links are untrusted input. Fetchers must block private/internal addresses and re-check redirects.
@@ -74,4 +82,4 @@ The pipeline extracts structured JSON API records and HTML detail pages from sto
 
 ## Phased implementation
 
-The full phase plan is in `PROJECT_SPEC.md`. Phase 0 established the repository and local services. Phase 1 added the domain models, reference data, and admin workflow. Phase 2 added monitored-source crawling; Phase 3 added extraction, normalization, deduplication, and review. Later phases add search, public pages, alerts, and production hardening.
+The full phase plan is in `PROJECT_SPEC.md`. Phase 0 established the repository and local services. Phase 1 added the domain models, reference data, and admin workflow. Phase 2 added monitored-source crawling; Phase 3 added extraction, normalization, deduplication, and review; Phase 4 added public search and discovery pages. Later phases add accounts, alerts, bookmarks, and production hardening.
