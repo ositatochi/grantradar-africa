@@ -1,6 +1,6 @@
-# Phase 1 data model
+# Phase 5 data model
 
-This diagram reflects the implemented Phase 1 model relationships. Search, alert delivery, pipeline, and team workflows are represented in the schema but are not yet user-facing features.
+This diagram includes the active Phase 5 account, alert, bookmark, and personal pipeline relationships. Team workflows and the public API remain future work.
 
 ```mermaid
 erDiagram
@@ -13,6 +13,9 @@ erDiagram
     USER ||--o{ COMMENT : writes
     USER ||--o{ API_TOKEN : owns
     USER ||--o{ ERROR_REPORT : submits
+    APPLICANT_TYPE ||--o{ USER : classifies
+    COUNTRY }o--o{ USER : targets
+    SECTOR }o--o{ USER : targets
     FUNDER ||--o{ OPPORTUNITY : offers
     OPPORTUNITY ||--o{ OPPORTUNITY_SOURCE : attributed_to
     SOURCE ||--o{ OPPORTUNITY_SOURCE : reports
@@ -36,6 +39,7 @@ erDiagram
     OPPORTUNITY ||--o{ PIPELINE_ITEM : tracked
     TEAM ||--o{ PIPELINE_ITEM : shares
     PIPELINE_ITEM ||--o{ NOTE : includes
+    PIPELINE_ITEM ||--o{ DEADLINE_REMINDER : schedules
     TEAM ||--o{ TEAM_MEMBER : includes
     TEAM ||--o{ COMMENT : receives
     OPPORTUNITY ||--o{ COMMENT : receives

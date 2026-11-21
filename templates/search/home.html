@@ -45,6 +45,19 @@
         {% empty %}
           <p class="empty-state">No verified calls in this deadline window.</p>
         {% endfor %}
+
+        {% if most_saved %}
+          <section class="content-section">
+            <div class="section-heading">
+              <div><p class="eyebrow">Community activity</p><h2>Most saved</h2></div>
+            </div>
+            <div class="card-grid">
+              {% for opportunity in most_saved %}
+                {% include "search/_opportunity_card.html" %}
+              {% endfor %}
+            </div>
+          </section>
+        {% endif %}
       </div>
     </section>
   {% endfor %}

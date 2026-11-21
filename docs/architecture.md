@@ -20,7 +20,7 @@ The compose stack is a local-development baseline. Production deployment, secret
 ```text
 grantradar/              Django project settings, URLs, ASGI/WSGI, Celery app
 apps/
-  accounts/               Authentication and user profiles
+  accounts/               Email/social authentication and user profiles
   analytics/              Privacy-friendly product metrics
   alerts/                 Search alerts and delivery
   api/                    Versioned REST API
@@ -33,7 +33,7 @@ apps/
   search/                 Search integration and saved queries
   sources/                Source configuration and review
   teams/                  Shared workspaces
-  tracker/                Bookmarks and application pipeline
+  tracker/                Bookmarks, application pipeline, reminders, and calendar export
 docs/                     Architecture and data model documentation
 tests/                    Cross-app and integration tests
 ```
@@ -50,7 +50,7 @@ The crawler must store factual fields, short original summaries, and source link
 
 ## Phase 1 data foundation
 
-The initial schema separates reference taxonomies, funders, opportunities, monitored sources, crawl runs, and raw snapshots. User-facing saved searches, alerts, bookmarks, pipeline items, teams, API tokens, and audit events are represented in the schema for later phases; their workflows are not active yet.
+The initial schema separates reference taxonomies, funders, opportunities, monitored sources, crawl runs, and raw snapshots. Phase 5 activates account, saved-search, alert, bookmark, and personal pipeline workflows; team workspaces and the public API remain later-phase work.
 
 Run `python manage.py seed_reference_data` to load the offline ISO country/currency data and the starter SDG, sector, theme, and applicant-type taxonomies. Africa is pre-tagged; other countries are available for eligibility mapping and can be assigned a region in admin. Add monitored sources to `sources.yaml`, then load them with `python manage.py load_sources`.
 
@@ -70,7 +70,15 @@ The public home page, opportunity search/detail pages, and funder directory/deta
 
 Meilisearch stores a denormalized public index. Opportunity saves and deletes queue asynchronous index updates, with bounded retries when Meilisearch is unreachable. The `reindex_opportunities` management command configures the index and rebuilds it from verified database records. Search rechecks Meilisearch hits against the database visibility and filter rules. If the service or index is unavailable, the page displays a notice and falls back to basic database keyword search.
 
-Public pages include canonical and Open Graph metadata, `robots.txt`, and an XML sitemap. The PWA shell caches only its static stylesheet, icon, and offline page; it never caches opportunity pages that could contain stale deadlines. “Most saved” is deferred until bookmarks are implemented in Phase 5. The matching-funds field is tri-state so unknown extraction data is not presented as an explicit “no matching funds required.”
+Public pages include canonical and Open Graph metadata, `robots.txt`, and an XML sitemap. The PWA shell caches only its static stylesheet, icon, and offline page; it never caches opportunity pages that could contain stale deadlines. “Most saved” is based on actual bookmark counts. The matching-funds field is tri-state so unknown extraction data is not presented as an explicit “no matching funds required.”
+
+## Phase 5 accounts and personalization
+
+Email/password registration and email-based login use django-allauth with mandatory email verification. Google OAuth is optional and appears only when both client credentials are configured. Profiles store an applicant type, target countries and sectors, budget range, and a separate opt-in for deadline reminders.
+
+Saved searches persist validated filter values. Email alert subscriptions record explicit consent, support instant/daily/weekly schedules, and keep delivery outcomes for troubleshooting; only email delivery is active in this phase. Instant alerts queue when an opportunity becomes public, while scheduled alerts send new matching records and retry transient delivery failures. Alert query evaluation reuses the public visibility and filter rules. Recommendations score verified opportunities against profile sectors, eligible countries, budget, and sectors from prior bookmarks or pipeline activity; already saved/tracked opportunities are excluded.
+
+Bookmarks and pipeline items are scoped to their owner. Pipeline notes are private, and every tracker detail/update is owner-checked. Deadline reminder emails are sent only for opted-in users and active public pipeline items, at 14, 7, 3, and 1 days before the deadline. The authenticated ICS export includes only the requesting user's active pipeline deadlines; account pages and calendar data are not cached by the PWA.
 
 ## Trust and security boundaries
 
@@ -82,4 +90,4 @@ Public pages include canonical and Open Graph metadata, `robots.txt`, and an XML
 
 ## Phased implementation
 
-The full phase plan is in `PROJECT_SPEC.md`. Phase 0 established the repository and local services. Phase 1 added the domain models, reference data, and admin workflow. Phase 2 added monitored-source crawling; Phase 3 added extraction, normalization, deduplication, and review; Phase 4 added public search and discovery pages. Later phases add accounts, alerts, bookmarks, and production hardening.
+The full phase plan is in `PROJECT_SPEC.md`. Phase 0 established the repository and local services. Phase 1 added the domain models, reference data, and admin workflow. Phase 2 added monitored-source crawling; Phase 3 added extraction, normalization, deduplication, and review; Phase 4 added public search and discovery pages; Phase 5 added accounts, alerts, bookmarks, personal tracking, and calendar export. Later phases add web-search discovery, teams, the public API, and production hardening.

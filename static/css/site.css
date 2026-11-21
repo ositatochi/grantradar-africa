@@ -27,8 +27,10 @@ h1 { font-size: clamp(2rem, 5vw, 3.5rem); letter-spacing: -.035em; }
 h2 { font-size: clamp(1.35rem, 3vw, 1.8rem); }
 h3 { font-size: 1.18rem; margin-bottom: .35rem; }
 .site-header { align-items: center; background: var(--surface); border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; padding: .8rem max(1rem, calc((100% - 1180px) / 2)); }
-.site-header nav { display: flex; gap: 1.2rem; }
+.site-header nav { align-items: center; display: flex; flex-wrap: wrap; gap: .75rem 1.2rem; }
 .site-header nav a, .brand { color: var(--ink); font-weight: 700; text-decoration: none; }
+.logout-form { display: inline; margin: 0; }
+.logout-form button { padding: .35rem .65rem; }
 .brand { font-size: 1.18rem; }
 .brand span { color: #28715d; }
 main { margin: 0 auto; max-width: 1180px; min-height: 70vh; padding: 1.5rem 1rem 4rem; }
@@ -106,6 +108,18 @@ dd { margin: .15rem 0 0; }
 .funder-card h2 a { color: var(--ink); }
 .messages { margin: 1rem auto 0; max-width: 1180px; padding: 0 1rem; }
 .message { background: var(--green-soft); border-radius: .5rem; color: var(--green); padding: .75rem 1rem; }
+.account-panel { background: var(--surface); border: 1px solid var(--line); border-radius: .8rem; margin: 2rem auto; max-width: 620px; padding: clamp(1.2rem, 4vw, 2rem); }
+.account-panel form p { margin-bottom: 1rem; }
+.account-panel form label { display: block; font-size: .9rem; font-weight: 700; margin-bottom: .35rem; }
+.account-panel form ul { color: var(--muted); font-size: .85rem; padding-left: 1.2rem; }
+.account-panel form .helptext { color: var(--muted); display: block; font-size: .85rem; }
+.save-search-panel { background: var(--green-soft); border-radius: .7rem; margin: 1rem 0 1.5rem; padding: 1rem; }
+.save-search-panel h2 { font-size: 1.15rem; }
+.save-search-panel p { margin-bottom: .65rem; }
+.account-actions { align-items: center; display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1rem; }
+.account-actions form { margin: 0; }
+.account-actions .button { font-size: .9rem; }
+.private-note { border-top: 1px solid var(--line); margin-top: 1rem; padding-top: 1rem; }
 .split-sections { display: grid; gap: 2rem; grid-template-columns: 1fr 1fr; }
 
 @media (max-width: 760px) {

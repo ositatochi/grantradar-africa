@@ -1,0 +1,62 @@
+{% extends "search/base.html" %}
+
+{% block document_title %}My funding tracker | GrantRadar Africa{% endblock %}
+{% block content %}
+  <header class="page-heading">
+    <p class="eyebrow">Your account</p>
+    <h1>My funding tracker</h1>
+    <p>Keep private notes and track each opportunity from interest to outcome.</p>
+    <a class="button" href="{% url 'tracker:calendar-ics' %}">Export deadlines to calendar</a>
+  </header>
+
+  <section class="content-section">
+    <div class="section-heading"><div><p class="eyebrow">Selected for you</p><h2>Best matches</h2></div></div>
+    <div class="card-grid">
+      {% for recommendation in recommendations %}
+        {% with opportunity=recommendation.opportunity %}
+          <div class="recommendation-item">
+            <p class="eyebrow">Match score {{ recommendation.score }}</p>
+            {% include "search/_opportunity_card.html" %}
+          </div>
+        {% endwith %}
+      {% empty %}
+        <p class="empty-state">Add sectors, countries, or budget preferences to your profile and save opportunities to improve your matches.</p>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="content-section">
+    <div class="section-heading"><div><p class="eyebrow">Applications</p><h2>My pipeline</h2></div></div>
+    <div class="card-grid">
+      {% for item in pipeline_items %}
+        <article class="funder-card">
+          <h3><a href="{% url 'tracker:item-detail' item.pk %}">{{ item.opportunity.title }}</a></h3>
+          <p>{{ item.get_status_display }}</p>
+          {% if item.opportunity.deadline_date %}<p>Deadline: {{ item.opportunity.deadline_date|date:"j F Y" }}</p>{% endif %}
+          <a href="{{ item.opportunity.get_absolute_url }}">View public listing</a>
+        </article>
+      {% empty %}
+        <p class="empty-state">Your tracker is empty. Add an opportunity from its detail page.</p>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="content-section">
+    <div class="section-heading"><div><p class="eyebrow">Saved for later</p><h2>Bookmarks</h2></div></div>
+    <div class="card-grid">
+      {% for bookmark in bookmarks %}
+        <article class="funder-card">
+          <h3><a href="{{ bookmark.opportunity.get_absolute_url }}">{{ bookmark.opportunity.title }}</a></h3>
+          {% if bookmark.opportunity.deadline_date %}<p>Deadline: {{ bookmark.opportunity.deadline_date|date:"j F Y" }}</p>{% endif %}
+          <form method="post" action="{% url 'tracker:bookmark-toggle' bookmark.opportunity.pk %}">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="remove">
+            <button class="button button-secondary" type="submit">Remove bookmark</button>
+          </form>
+        </article>
+      {% empty %}
+        <p class="empty-state">You have no bookmarks yet.</p>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}

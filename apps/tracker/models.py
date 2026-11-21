@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 
 from apps.core.models import TimeStampedModel
 from apps.opportunities.models import Opportunity
@@ -102,3 +103,39 @@ class Note(TimeStampedModel):
 
     def __str__(self) -> str:
         return f"Note by {self.author} on {self.pipeline_item}"
+
+
+class DeadlineReminder(models.Model):
+    class Status(models.TextChoices):
+        QUEUED = "queued", "Queued"
+        SENT = "sent", "Sent"
+        FAILED = "failed", "Failed"
+
+    pipeline_item = models.ForeignKey(
+        PipelineItem,
+        on_delete=models.CASCADE,
+        related_name="deadline_reminders",
+    )
+    deadline_date = models.DateField()
+    days_before = models.PositiveSmallIntegerField(
+        choices=[(14, "14 days"), (7, "7 days"), (3, "3 days"), (1, "1 day")]
+    )
+    status = models.CharField(max_length=8, choices=Status.choices, default=Status.QUEUED)
+    sent_at = models.DateTimeField(null=True, blank=True)
+    error_message = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ["deadline_date", "days_before"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["pipeline_item", "deadline_date", "days_before"],
+                name="deadline_reminder_item_date_days_unique",
+            ),
+            models.CheckConstraint(
+                condition=Q(days_before__in=[14, 7, 3, 1]),
+                name="deadline_reminder_days_valid",
+            ),
+        ]
+
+    def __str__(self) -> str:
+        return f"{self.pipeline_item} — {self.days_before} days before"

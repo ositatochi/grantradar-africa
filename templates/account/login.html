@@ -1,0 +1,23 @@
+{% extends "search/base.html" %}
+{% load socialaccount %}
+
+{% block document_title %}Sign in | GrantRadar Africa{% endblock %}
+{% block content %}
+  <section class="account-panel">
+    <p class="eyebrow">Welcome back</p>
+    <h1>Sign in</h1>
+    <form method="post" action="{% url 'account_login' %}">
+      {% csrf_token %}
+      {{ form.as_p }}
+      {% if redirect_field_value %}
+        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
+      {% endif %}
+      <button type="submit">Sign in</button>
+    </form>
+    <p><a href="{% url 'account_reset_password' %}">Forgot your password?</a></p>
+    {% if google_oauth_enabled %}
+      <p><a class="button button-secondary" href="{% provider_login_url 'google' %}">Continue with Google</a></p>
+    {% endif %}
+    <p>New to GrantRadar? <a href="{% url 'account_signup' %}">Create an account</a>.</p>
+  </section>
+{% endblock %}

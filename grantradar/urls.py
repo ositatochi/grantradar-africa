@@ -9,6 +9,10 @@ def health(request: HttpRequest) -> JsonResponse:
 
 urlpatterns = [
     path("", include("apps.search.urls")),
+    path("accounts/", include("allauth.urls")),
+    path("account/", include("apps.accounts.urls")),
+    path("account/", include("apps.alerts.urls")),
+    path("tracker/", include("apps.tracker.urls")),
     path("admin/", admin.site.urls),
     path("health/", health, name="health"),
 ]
