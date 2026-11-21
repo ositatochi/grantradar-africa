@@ -1,2 +1,51 @@
-# Curated source definitions are added and verified in Phase 2.
-sources: []
+sources:
+  - name: Funds for NGOs
+    source_type: rss
+    url: https://www.fundsforngos.org/feed/
+    crawl_frequency_hours: 12
+    reliability_score: "0.800"
+  - name: Opportunity Desk
+    source_type: rss
+    url: https://opportunitydesk.org/feed/
+    crawl_frequency_hours: 12
+    reliability_score: "0.800"
+  - name: UK Research and Innovation
+    source_type: rss
+    url: https://www.gov.uk/government/organisations/uk-research-and-innovation.atom
+    crawl_frequency_hours: 12
+    reliability_score: "0.900"
+  - name: UK Foreign Commonwealth and Development Office
+    source_type: rss
+    url: https://www.gov.uk/government/organisations/foreign-commonwealth-development-office.atom
+    crawl_frequency_hours: 24
+    reliability_score: "0.900"
+  - name: UK Department for Business and Trade
+    source_type: rss
+    url: https://www.gov.uk/government/organisations/department-for-business-and-trade.atom
+    crawl_frequency_hours: 24
+    reliability_score: "0.800"
+  - name: UK Department for Environment Food and Rural Affairs
+    source_type: rss
+    url: https://www.gov.uk/government/organisations/department-for-environment-food-rural-affairs.atom
+    crawl_frequency_hours: 24
+    reliability_score: "0.800"
+  - name: World Health Organization
+    source_type: rss
+    url: https://www.who.int/rss-feeds/news-english.xml
+    crawl_frequency_hours: 24
+    reliability_score: "0.700"
+  - name: National Endowment for Democracy
+    source_type: rss
+    url: https://www.ned.org/feed/
+    crawl_frequency_hours: 24
+    reliability_score: "0.800"
+  - name: Ford Foundation
+    source_type: rss
+    url: https://www.fordfoundation.org/feed/
+    crawl_frequency_hours: 24
+    reliability_score: "0.800"
+  - name: Gates Foundation
+    source_type: rss
+    url: https://www.gatesfoundation.org/feed
+    crawl_frequency_hours: 24
+    reliability_score: "0.800"

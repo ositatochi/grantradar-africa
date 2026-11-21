@@ -14,6 +14,8 @@ Decisions for the initial scaffold. Revisit these as the phased implementation a
 | Country regions | Pre-tag recognized African countries as `Africa`; leave other region values blank | Avoids inventing subregions before a geographic taxonomy is chosen while keeping all countries selectable. |
 | Deployment scaffold | Docker Compose for local development and a single-host deployment baseline | Gives contributors a consistent service topology; production hardening is deferred to Phase 8. |
 | Phase 1 delivery | Migrations, seed commands, and source/opportunity admin are implemented; crawl and user workflows remain deferred | Keeps the data foundation usable without prematurely implementing later discovery phases. |
+| Phase 2 crawler runtime | Run each Scrapy source crawl in a child process from Celery | Avoids restarting Twisted's reactor in long-lived Celery workers while keeping crawl failures isolated per source. |
+| Initial crawl sources | Seed ten live RSS/Atom feeds first; defer blocked or mislabelled feed endpoints until their official APIs are verified | The candidate Grants.gov `.xml` URL returned an HTML application page, so it is not treated as a working feed. |
 | Data trust | Listings will retain official source URLs and verification dates | Applicants must be able to confirm opportunity details with the funder. |
 | Crawling safety | Respect robots.txt, terms, per-domain limits, and SSRF protections | Discovery must not bypass access controls or put the service and its users at risk. |
 | Project license | Undecided | Do not imply permissions for reuse or contributions until the project owner chooses a license. |

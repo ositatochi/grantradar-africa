@@ -54,6 +54,12 @@ The initial schema separates reference taxonomies, funders, opportunities, monit
 
 Run `python manage.py seed_reference_data` to load the offline ISO country/currency data and the starter SDG, sector, theme, and applicant-type taxonomies. Africa is pre-tagged; other countries are available for eligibility mapping and can be assigned a region in admin. Add monitored sources to `sources.yaml`, then load them with `python manage.py load_sources`.
 
+## Phase 2 crawling
+
+Celery Beat schedules enabled sources by their configured crawl interval. The worker starts an isolated Scrapy process per source, honors robots.txt, applies a per-domain delay and retry policy, and rejects non-public destination addresses. RSS/Atom, JSON API, CSS-configured HTML list, and sitemap adapters produce compressed, content-hashed `RawDocument` snapshots. Source runs update success time, record count, failure streak, and average yield for the admin health views. Set `CRAWLER_USER_AGENT` to a clear bot identity and contact URL before deploying.
+
+The initial `sources.yaml` feed URLs were checked for successful HTTP responses and RSS/Atom content types on 2026-11-21. Some feeds are broader funding-announcement sources rather than grant-only feeds; all extracted records remain unverified snapshots until the later extraction and review phase.
+
 ## Trust and security boundaries
 
 - User-submitted URLs and discovered links are untrusted input. Fetchers must block private/internal addresses and re-check redirects.
@@ -64,4 +70,4 @@ Run `python manage.py seed_reference_data` to load the offline ISO country/curre
 
 ## Phased implementation
 
-The full phase plan is in `PROJECT_SPEC.md`. Phase 0 established the repository and local services. Phase 1 adds the domain models, reference data, and admin workflow. Later phases add crawling, extraction, search, public pages, alerts, and production hardening.
+The full phase plan is in `PROJECT_SPEC.md`. Phase 0 established the repository and local services. Phase 1 added the domain models, reference data, and admin workflow. Phase 2 adds monitored-source crawling; later phases add extraction, search, public pages, alerts, and production hardening.

@@ -2,6 +2,8 @@ import os
 from pathlib import Path
 from typing import Any
 
+from celery.schedules import crontab
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get(
@@ -75,6 +77,12 @@ if os.environ.get("DJANGO_TEST_SQLITE") == "1":
             "NAME": ":memory:",
         }
     }
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "grantradar-tests",
+        }
+    }
 else:
     DATABASES = {
         "default": {
@@ -85,6 +93,13 @@ else:
             "HOST": os.environ.get("POSTGRES_HOST", "localhost"),
             "PORT": os.environ.get("POSTGRES_PORT", "5432"),
             "CONN_MAX_AGE": 60,
+        }
+    }
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": os.environ.get("REDIS_CACHE_URL", "redis://localhost:6379/2"),
+            "KEY_PREFIX": "grantradar",
         }
     }
 
@@ -110,3 +125,9 @@ CELERY_RESULT_BACKEND = os.environ.get(
     "redis://localhost:6379/1",
 )
 CELERY_TIMEZONE = TIME_ZONE
+CELERY_BEAT_SCHEDULE = {
+    "crawl-due-sources-every-15-minutes": {
+        "task": "apps.crawler.tasks.crawl_due_sources",
+        "schedule": crontab(minute="*/15"),
+    }
+}
