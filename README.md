@@ -4,7 +4,7 @@ GrantRadar Africa is a free platform for finding and tracking funding opportunit
 
 ## Status
 
-Phase 0: repository and development-environment scaffold. Application models and grant data are not implemented yet.
+Phase 1 is complete: the domain schema, migrations, reference-data seeding, and source/opportunity admin are in place. Crawling and public discovery are later phases.
 
 ## Requirements
 
@@ -21,8 +21,26 @@ Phase 0: repository and development-environment scaffold. Application models and
    docker compose up --build
    ```
 
-3. Open <http://localhost:8000/>. Django admin is at <http://localhost:8000/admin/>.
-4. Run checks locally with `uv sync --all-groups` followed by `make check`.
+3. Seed countries, currencies, SDGs, and taxonomies:
+
+   ```powershell
+   docker compose exec django uv run python manage.py seed_reference_data
+   ```
+
+4. Create an admin account:
+
+   ```powershell
+   docker compose exec django uv run python manage.py createsuperuser
+   ```
+
+5. Open <http://localhost:8000/>. Django admin is at <http://localhost:8000/admin/>.
+6. To load sources configured in `sources.yaml`, run:
+
+   ```powershell
+   docker compose exec django uv run python manage.py load_sources
+   ```
+
+7. Run checks locally with `uv sync --all-groups` followed by `make check`. Pytest uses an in-memory SQLite database; the application and Compose stack use PostgreSQL.
 
 The optional Celery Flower dashboard is available with:
 

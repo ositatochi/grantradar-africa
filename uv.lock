@@ -854,7 +854,9 @@ dependencies = [
     { name = "nh3" },
     { name = "pgvector" },
     { name = "psycopg", extra = ["binary"] },
+    { name = "pycountry" },
     { name = "pydantic" },
+    { name = "pyyaml" },
     { name = "rapidfuzz" },
     { name = "scrapy" },
     { name = "scrapy-playwright" },
@@ -875,6 +877,7 @@ dev = [
     { name = "pre-commit" },
     { name = "pytest" },
     { name = "pytest-django" },
+    { name = "pytest-env" },
     { name = "ruff" },
     { name = "types-python-dateutil" },
 ]
@@ -901,7 +904,9 @@ requires-dist = [
     { name = "nh3", specifier = ">=0.2,<1" },
     { name = "pgvector", specifier = ">=0.4,<1" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2,<4" },
+    { name = "pycountry", specifier = ">=24.6,<26" },
     { name = "pydantic", specifier = ">=2.11,<3" },
+    { name = "pyyaml", specifier = ">=6,<7" },
     { name = "rapidfuzz", specifier = ">=3.13,<4" },
     { name = "scrapy", specifier = ">=2.13,<3" },
     { name = "scrapy-playwright", specifier = ">=0.0.43,<1" },
@@ -922,6 +927,7 @@ dev = [
     { name = "pre-commit", specifier = ">=4.2,<5" },
     { name = "pytest", specifier = ">=8.3,<9" },
     { name = "pytest-django", specifier = ">=4.11,<5" },
+    { name = "pytest-env", specifier = ">=1.1,<2" },
     { name = "ruff", specifier = ">=0.11,<1" },
     { name = "types-python-dateutil", specifier = ">=2.9,<3" },
 ]
@@ -1559,6 +1565,15 @@ wheels = [
 ]
 
 [[package]]
+name = "pycountry"
+version = "24.6.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/76/57/c389fa68c50590881a75b7883eeb3dc15e9e73a0fdc001cdd45c13290c92/pycountry-24.6.1.tar.gz", hash = "sha256:b61b3faccea67f87d10c1f2b0fc0be714409e8fcdcc1315613174f6466c10221", size = 6043910, upload-time = "2024-06-01T04:12:15.05Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b1/ec/1fb891d8a2660716aadb2143235481d15ed1cbfe3ad669194690b0604492/pycountry-24.6.1-py3-none-any.whl", hash = "sha256:f1a4fb391cd7214f8eefd39556d740adcc233c778a27f8942c8dca351d6ce06f", size = 6335189, upload-time = "2024-06-01T04:11:49.711Z" },
+]
+
+[[package]]
 name = "pycparser"
 version = "3.12"
 source = { registry = "https://pypi.org/simple" }
@@ -1669,6 +1684,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/44/f6/3851312120c2bf2f19cafff931e75059aad1ba670703cd751e2fde9bc942/pytest_django-4.14.0.tar.gz", hash = "sha256:26787dd3f422cfbab8f55b80a776e2edea7a11092cb74e960bef1312515708ef", size = 94700, upload-time = "2026-08-10T14:13:08.319Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/9c/03/850bffad2b581c440ca51c039d74504d5a422c94bda0bdb8a8ba5068d48b/pytest_django-4.14.0-py3-none-any.whl", hash = "sha256:c533b08d89cc675efcd5398eea270b34547e35f9a3608e2c9748dd88428ea187", size = 27067, upload-time = "2026-08-10T14:13:06.998Z" },
+]
+
+[[package]]
+name = "pytest-env"
+version = "1.2.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pytest" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/13/12/9c87d0ca45d5992473208bcef2828169fa7d39b8d7fc6e3401f5c08b8bf7/pytest_env-1.2.0.tar.gz", hash = "sha256:475e2ebe8626cee01f491f304a74b12137742397d6c784ea4bc258f069232b80", size = 8973, upload-time = "2025-10-09T19:15:47.42Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/27/98/822b924a4a3eb58aacba84444c7439fce32680592f394de26af9c76e2569/pytest_env-1.2.0-py3-none-any.whl", hash = "sha256:d7e5b7198f9b83c795377c09feefa45d56083834e60d04767efd64819fc9da00", size = 6251, upload-time = "2025-10-09T19:15:46.077Z" },
 ]
 
 [[package]]

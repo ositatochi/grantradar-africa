@@ -29,7 +29,9 @@ dependencies = [
     "nh3>=0.2,<1",
     "pgvector>=0.4,<1",
     "psycopg[binary]>=3.2,<4",
+    "pycountry>=24.6,<26",
     "pydantic>=2.11,<3",
+    "pyyaml>=6,<7",
     "rapidfuzz>=3.13,<4",
     "sentry-sdk[django]>=2.25,<3",
     "scrapy>=2.13,<3",
@@ -50,17 +52,21 @@ dev = [
     "pre-commit>=4.2,<5",
     "pytest>=8.3,<9",
     "pytest-django>=4.11,<5",
+    "pytest-env>=1.1,<2",
     "ruff>=0.11,<1",
     "types-python-dateutil>=2.9,<3",
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["grantradar"]
+packages = ["grantradar", "apps"]
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "grantradar.settings"
 python_files = ["test_*.py", "*_test.py"]
 testpaths = ["tests"]
+
+[tool.pytest_env]
+DJANGO_TEST_SQLITE = "1"
 
 [tool.ruff]
 line-length = 100
@@ -68,6 +74,9 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.per-file-ignores]
+"**/migrations/*.py" = ["E501"]
 
 [tool.mypy]
 python_version = "3.12"
