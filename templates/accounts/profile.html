@@ -1,0 +1,15 @@
+{% extends "search/base.html" %}
+
+{% block document_title %}Your profile | GrantRadar Africa{% endblock %}
+{% block content %}
+  <section class="account-panel">
+    <p class="eyebrow">Your account</p>
+    <h1>Profile and funding preferences</h1>
+    <p>Your profile helps personalise funding discovery. These details are private to your account.</p>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Save profile</button>
+    </form>
+  </section>
+{% endblock %}

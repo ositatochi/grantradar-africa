@@ -15,6 +15,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_GET
 from django_ratelimit.decorators import ratelimit
 
+from apps.alerts.forms import SaveSearchForm
 from apps.core.models import Country
 from apps.funders.models import Funder
 from apps.opportunities.models import ErrorReport, Opportunity
@@ -78,6 +79,11 @@ def home(request: HttpRequest) -> HttpResponse:
         "rolling_opportunities": public.filter(
             Q(rolling=True) | Q(status=Opportunity.Status.ROLLING)
         ).order_by("-date_last_verified")[:6],
+        "most_saved": (
+            public.annotate(bookmark_count=Count("bookmarks"))
+            .filter(bookmark_count__gt=0)
+            .order_by("-bookmark_count", "title")[:6]
+        ),
         "today": today,
         "nigeria_id": nigeria.pk if nigeria else "",
         "canonical_url": request.build_absolute_uri("/"),
@@ -114,6 +120,7 @@ def opportunity_list(request: HttpRequest) -> HttpResponse:
 
     context = {
         "form": form,
+        "save_search_form": SaveSearchForm(),
         "page_obj": page_obj,
         "warning": warning,
         "canonical_url": request.build_absolute_uri(reverse("search:opportunity-list")),
@@ -147,6 +154,20 @@ def opportunity_detail(request: HttpRequest, pk: int, slug: str) -> HttpResponse
         .prefetch_related("sectors", "source_links__source")
         .order_by("deadline_date")[:4]
     )
+    is_bookmarked = False
+    pipeline_item = None
+    if request.user.is_authenticated:
+        from apps.tracker.models import Bookmark, PipelineItem
+
+        is_bookmarked = Bookmark.objects.filter(
+            owner=request.user,
+            opportunity=opportunity,
+        ).exists()
+        pipeline_item = PipelineItem.objects.filter(
+            owner=request.user,
+            opportunity=opportunity,
+        ).first()
+
     return render(
         request,
         "search/opportunity_detail.html",
@@ -154,6 +175,8 @@ def opportunity_detail(request: HttpRequest, pk: int, slug: str) -> HttpResponse
             "opportunity": opportunity,
             "similar_opportunities": similar,
             "error_form": ErrorReportForm(),
+            "is_bookmarked": is_bookmarked,
+            "pipeline_item": pipeline_item,
             "canonical_url": request.build_absolute_uri(canonical_path),
         },
     )

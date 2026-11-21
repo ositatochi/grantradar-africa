@@ -4,7 +4,7 @@ GrantRadar Africa is a free platform for finding and tracking funding opportunit
 
 ## Status
 
-Phase 4 is complete: the public site provides verified opportunity search, filters, opportunity and funder pages, SEO metadata, sitemaps, and an offline-capable PWA shell. Meilisearch powers full-text search; when it is unavailable, the site reports the outage and uses a database keyword search. Only records with a verification date and official source URL are public. Bookmarks and “most saved” are deferred until Phase 5.
+Phase 5 is implemented: people can register with email, optionally sign in with configured Google OAuth, personalize recommendations, save searches, opt into email alerts and deadline reminders, bookmark opportunities, track applications with private notes, and export pipeline deadlines to a calendar. Phase 4 public discovery remains restricted to verified opportunities with official source links. Email verification is required for new email accounts.
 
 ## Requirements
 
@@ -34,6 +34,7 @@ Phase 4 is complete: the public site provides verified opportunity search, filte
    ```
 
 5. Open <http://localhost:8000/>. Django admin is at <http://localhost:8000/admin/>.
+   Local email is printed to the Django container console. Configure SMTP and the optional Google OAuth client in `.env` before enabling those services outside local development.
 6. To load sources configured in `sources.yaml`, run:
 
    ```powershell
@@ -59,6 +60,8 @@ The optional Celery Flower dashboard is available with:
 ```powershell
 docker compose --profile monitoring up --build
 ```
+
+Email alerts run every 15 minutes, and opted-in application deadline reminders run daily for deadlines 14, 7, 3, and 1 day away. Set `EMAIL_BACKEND`, `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `EMAIL_USE_TLS`, and `DEFAULT_FROM_EMAIL` for SMTP. Google sign-in is shown only when both `GOOGLE_OAUTH_CLIENT_ID` and `GOOGLE_OAUTH_CLIENT_SECRET` are set.
 
 ## Project documentation
 

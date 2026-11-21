@@ -97,6 +97,18 @@ module = ["apps.search.tasks"]
 disable_error_code = ["untyped-decorator"]
 
 [[tool.mypy.overrides]]
+module = ["apps.alerts.tasks", "apps.tracker.tasks"]
+disable_error_code = ["untyped-decorator"]
+
+[[tool.mypy.overrides]]
+module = ["apps.accounts.forms", "apps.tracker.forms"]
+disable_error_code = ["type-arg"]
+
+[[tool.mypy.overrides]]
+module = ["allauth.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
 module = ["apps.search.views"]
 disable_error_code = ["untyped-decorator", "type-arg"]
 

@@ -1,0 +1,43 @@
+{% extends "search/base.html" %}
+
+{% block document_title %}Track {{ item.opportunity.title }} | GrantRadar Africa{% endblock %}
+{% block content %}
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <a href="{% url 'tracker:dashboard' %}">My tracker</a><span aria-hidden="true">/</span>
+    <span>{{ item.opportunity.title }}</span>
+  </nav>
+  <section class="account-panel">
+    <p class="eyebrow">Application pipeline</p>
+    <h1>{{ item.opportunity.title }}</h1>
+    <p><a href="{{ item.opportunity.get_absolute_url }}">View the public opportunity details</a></p>
+    {% if item.opportunity.deadline_date %}<p>Deadline: {{ item.opportunity.deadline_date|date:"j F Y" }}</p>{% endif %}
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="status">
+      {{ status_form.as_p }}
+      <button type="submit">Update status</button>
+    </form>
+    <form method="post" action="{% url 'tracker:remove-item' item.pk %}">
+      {% csrf_token %}
+      <button class="button button-secondary" type="submit">Remove from tracker</button>
+    </form>
+  </section>
+
+  <section class="account-panel">
+    <h2>Private notes</h2>
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="note">
+      {{ note_form.as_p }}
+      <button type="submit">Add private note</button>
+    </form>
+    {% for note in notes %}
+      <article class="private-note">
+        <p>{{ note.content|linebreaksbr }}</p>
+        <small>Added {{ note.created_at|date:"j F Y, H:i" }}</small>
+      </article>
+    {% empty %}
+      <p class="empty-state">No private notes yet.</p>
+    {% endfor %}
+  </section>
+{% endblock %}

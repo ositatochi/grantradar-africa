@@ -26,6 +26,27 @@
         View official opportunity
       </a>
       <p class="verification-note">Last verified {{ opportunity.date_last_verified|date:"j F Y" }}. Always confirm current requirements with the funder.</p>
+      {% if user.is_authenticated %}
+        <div class="account-actions">
+          <form method="post" action="{% url 'tracker:bookmark-toggle' opportunity.pk %}">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="{% if is_bookmarked %}remove{% else %}save{% endif %}">
+            <button class="button button-secondary" type="submit">
+              {% if is_bookmarked %}Remove bookmark{% else %}Save opportunity{% endif %}
+            </button>
+          </form>
+          {% if pipeline_item %}
+            <a class="button button-secondary" href="{% url 'tracker:item-detail' pipeline_item.pk %}">View in my tracker</a>
+          {% else %}
+            <form method="post" action="{% url 'tracker:pipeline-add' opportunity.pk %}">
+              {% csrf_token %}
+              <button class="button button-secondary" type="submit">Track application</button>
+            </form>
+          {% endif %}
+        </div>
+      {% else %}
+        <p><a href="{% url 'account_login' %}?next={{ request.get_full_path|urlencode }}">Sign in</a> to bookmark or track this opportunity.</p>
+      {% endif %}
     </header>
 
     <div class="detail-grid">

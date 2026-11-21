@@ -1,0 +1,48 @@
+{% extends "search/base.html" %}
+
+{% block document_title %}Saved searches | GrantRadar Africa{% endblock %}
+{% block content %}
+  <header class="page-heading">
+    <p class="eyebrow">Your account</p>
+    <h1>Saved searches</h1>
+    <p>Revisit your filters and manage email alerts for new matching opportunities.</p>
+  </header>
+  <div class="card-grid">
+    {% for entry in entries %}
+      <article class="funder-card">
+        <h2><a href="{% url 'search:opportunity-list' %}?{{ entry.query_string }}">{{ entry.saved_search.name }}</a></h2>
+        <p>{{ entry.saved_search.query|default:"All opportunities" }}</p>
+        {% for alert in entry.saved_search.alerts.all %}
+          <form method="post" action="{% url 'alerts:update-alert' alert.pk %}">
+            {% csrf_token %}
+            <label for="frequency-{{ alert.pk }}">Email frequency</label>
+            <select id="frequency-{{ alert.pk }}" name="frequency">
+              <option value="instant"{% if alert.frequency == "instant" %} selected{% endif %}>As soon as a match is found</option>
+              <option value="daily"{% if alert.frequency == "daily" %} selected{% endif %}>Daily</option>
+              <option value="weekly"{% if alert.frequency == "weekly" %} selected{% endif %}>Weekly</option>
+            </select>
+            <p class="checkbox-field">
+              <input id="active-{{ alert.pk }}" type="checkbox" name="is_active" value="on"{% if alert.is_active %} checked{% endif %}>
+              <label for="active-{{ alert.pk }}">Email alerts are active</label>
+            </p>
+            {% if not alert.consent_given_at %}
+              <p class="checkbox-field">
+                <input id="consent-{{ alert.pk }}" type="checkbox" name="consent" value="on">
+                <label for="consent-{{ alert.pk }}">I agree to receive email alerts for this search.</label>
+              </p>
+            {% endif %}
+            <button type="submit">Update alert</button>
+          </form>
+        {% empty %}
+          <p>No email alert for this search.</p>
+        {% endfor %}
+        <form method="post" action="{% url 'alerts:delete-search' entry.saved_search.pk %}">
+          {% csrf_token %}
+          <button class="button button-secondary" type="submit">Delete saved search</button>
+        </form>
+      </article>
+    {% empty %}
+      <p class="empty-state">You have not saved a search yet. Search opportunities and choose “Save this search”.</p>
+    {% endfor %}
+  </div>
+{% endblock %}

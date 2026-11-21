@@ -32,6 +32,16 @@
       <p class="result-count">
         {% if page_obj.paginator.count == 1 %}1 opportunity{% else %}{{ page_obj.paginator.count }} opportunities{% endif %}
       </p>
+      {% if user.is_authenticated %}
+        <form class="save-search-panel" method="post" action="{% url 'alerts:save-search' %}?{{ request.GET.urlencode }}">
+          {% csrf_token %}
+          <h2>Save this search</h2>
+          {{ save_search_form.as_p }}
+          <button type="submit">Save search</button>
+        </form>
+      {% else %}
+        <p class="notice"><a href="{% url 'account_login' %}?next={{ request.get_full_path|urlencode }}">Sign in</a> to save this search and set email alerts.</p>
+      {% endif %}
       <div class="card-grid">
         {% for opportunity in page_obj %}
           {% include "search/_opportunity_card.html" %}
