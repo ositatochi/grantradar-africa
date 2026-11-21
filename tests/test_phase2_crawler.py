@@ -113,11 +113,17 @@ def test_crawl_task_updates_source_health(monkeypatch: pytest.MonkeyPatch) -> No
         return subprocess.CompletedProcess(command, 0, "", "")
 
     monkeypatch.setattr("apps.crawler.tasks.subprocess.run", fake_run)
+    queued: list[dict[str, int]] = []
+    monkeypatch.setattr(
+        "apps.pipeline.tasks.process_pending_documents.delay",
+        lambda **kwargs: queued.append(kwargs),
+    )
 
     assert crawl_source.run(source.pk) == 2
+    run = SourceRun.objects.get(source=source)
+    assert queued == [{"source_id": source.pk, "source_run_id": run.pk}]
 
     source.refresh_from_db()
-    run = SourceRun.objects.get(source=source)
     assert run.status == SourceRun.Status.SUCCEEDED
     assert run.completed_at is not None
     assert source.last_success_at is not None

@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     "apps.funders",
     "apps.sources",
     "apps.crawler",
+    "apps.pipeline",
     "apps.opportunities",
     "apps.alerts",
     "apps.tracker",
@@ -129,5 +130,13 @@ CELERY_BEAT_SCHEDULE = {
     "crawl-due-sources-every-15-minutes": {
         "task": "apps.crawler.tasks.crawl_due_sources",
         "schedule": crontab(minute="*/15"),
-    }
+    },
+    "process-pending-documents-every-five-minutes": {
+        "task": "apps.pipeline.tasks.process_pending_documents",
+        "schedule": crontab(minute="*/5"),
+    },
+    "expire-opportunities-daily": {
+        "task": "apps.pipeline.tasks.expire_opportunities",
+        "schedule": crontab(minute=0, hour=1),
+    },
 }

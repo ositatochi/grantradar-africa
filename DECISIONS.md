@@ -18,4 +18,5 @@ Decisions for the initial scaffold. Revisit these as the phased implementation a
 | Initial crawl sources | Seed ten live RSS/Atom feeds first; defer blocked or mislabelled feed endpoints until their official APIs are verified | The candidate Grants.gov `.xml` URL returned an HTML application page, so it is not treated as a working feed. |
 | Data trust | Listings will retain official source URLs and verification dates | Applicants must be able to confirm opportunity details with the funder. |
 | Crawling safety | Respect robots.txt, terms, per-domain limits, and SSRF protections | Discovery must not bypass access controls or put the service and its users at risk. |
+| Phase 3 extraction | Use schema-validated rule-based extraction; keep extracted opportunities unverified until an admin explicitly reviews them | No AI provider or credentials are configured. This avoids unreviewed claims while leaving AI extraction for a later, budgeted decision. |
 | Project license | Undecided | Do not imply permissions for reuse or contributions until the project owner chooses a license. |

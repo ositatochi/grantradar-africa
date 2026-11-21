@@ -40,13 +40,13 @@ tests/                    Cross-app and integration tests
 
 ## Data flow
 
-1. A monitored source or approved discovery query produces a candidate page.
+1. A monitored source produces a candidate page.
 2. A polite fetcher checks URL safety, robots.txt, rate limits, and source policy before retrieval.
 3. The pipeline stores a compressed snapshot, extracts and validates opportunity facts, then normalizes and deduplicates them.
-4. Low-confidence records enter an admin review queue. Approved records are stored in PostgreSQL and indexed in Meilisearch.
-5. Public pages and the API show the official source link, last verification date, and deadline status.
+4. Extracted records remain unverified. Admins can filter low-confidence records for review and explicitly verify selected opportunities.
+5. Verified records are stored in PostgreSQL; public discovery and search indexing are later phases.
 
-The crawler must store factual fields, short original summaries, and source links—not republish full copyrighted source text. AI extraction is a fallback only and must be schema-validated, content-hash cached, and budget limited.
+The crawler must store factual fields, short original summaries, and source links—not republish full copyrighted source text. Phase 3 uses rule-based extraction only; AI extraction is deferred until a provider, budget, and validation strategy are explicitly configured.
 
 ## Phase 1 data foundation
 
@@ -58,7 +58,11 @@ Run `python manage.py seed_reference_data` to load the offline ISO country/curre
 
 Celery Beat schedules enabled sources by their configured crawl interval. The worker starts an isolated Scrapy process per source, honors robots.txt, applies a per-domain delay and retry policy, and rejects non-public destination addresses. RSS/Atom, JSON API, CSS-configured HTML list, and sitemap adapters produce compressed, content-hashed `RawDocument` snapshots. Source runs update success time, record count, failure streak, and average yield for the admin health views. Set `CRAWLER_USER_AGENT` to a clear bot identity and contact URL before deploying.
 
-The initial `sources.yaml` feed URLs were checked for successful HTTP responses and RSS/Atom content types on 2026-11-21. Some feeds are broader funding-announcement sources rather than grant-only feeds; all extracted records remain unverified snapshots until the later extraction and review phase.
+The initial `sources.yaml` feed URLs were checked for successful HTTP responses and RSS/Atom content types on 2026-11-21. Some feeds are broader funding-announcement sources rather than grant-only feeds; all extracted opportunities remain unverified until individually reviewed.
+
+## Phase 3 extraction and review
+
+The pipeline extracts structured JSON API records and HTML detail pages from stored snapshots, sanitizes text, parses English, French, Portuguese, and Arabic deadlines, and declines ambiguous numeric dates. It normalizes source URLs, links fuzzy duplicates to their additional sources, assigns taxonomy tags and a confidence score, and stores new records as unverified. Admins can filter low-confidence records and explicitly verify opportunities; only verified records are automatically updated as deadlines approach or pass. AI-backed extraction is deferred.
 
 ## Trust and security boundaries
 
@@ -70,4 +74,4 @@ The initial `sources.yaml` feed URLs were checked for successful HTTP responses 
 
 ## Phased implementation
 
-The full phase plan is in `PROJECT_SPEC.md`. Phase 0 established the repository and local services. Phase 1 added the domain models, reference data, and admin workflow. Phase 2 adds monitored-source crawling; later phases add extraction, search, public pages, alerts, and production hardening.
+The full phase plan is in `PROJECT_SPEC.md`. Phase 0 established the repository and local services. Phase 1 added the domain models, reference data, and admin workflow. Phase 2 added monitored-source crawling; Phase 3 added extraction, normalization, deduplication, and review. Later phases add search, public pages, alerts, and production hardening.

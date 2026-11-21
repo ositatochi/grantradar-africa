@@ -38,6 +38,12 @@ class SourceRun(models.Model):
 
 
 class RawDocument(models.Model):
+    class ProcessingStatus(models.TextChoices):
+        PENDING = "pending", "Pending"
+        PROCESSED = "processed", "Processed"
+        IGNORED = "ignored", "Ignored"
+        FAILED = "failed", "Failed"
+
     source = models.ForeignKey(Source, on_delete=models.CASCADE, related_name="documents")
     source_run = models.ForeignKey(
         SourceRun,
@@ -55,12 +61,23 @@ class RawDocument(models.Model):
     etag = models.CharField(max_length=255, blank=True)
     last_modified = models.CharField(max_length=255, blank=True)
     fetched_at = models.DateTimeField(auto_now_add=True)
+    processing_status = models.CharField(
+        max_length=12,
+        choices=ProcessingStatus.choices,
+        default=ProcessingStatus.PENDING,
+    )
+    processed_at = models.DateTimeField(null=True, blank=True)
+    processing_error = models.TextField(blank=True)
 
     class Meta:
         ordering = ["-fetched_at"]
         indexes = [
             models.Index(fields=["source", "canonical_url"], name="raw_doc_source_url_idx"),
             models.Index(fields=["content_hash"], name="raw_doc_content_hash_idx"),
+            models.Index(
+                fields=["processing_status", "fetched_at"],
+                name="raw_doc_processing_fetched_idx",
+            ),
         ]
         constraints = [
             models.UniqueConstraint(
