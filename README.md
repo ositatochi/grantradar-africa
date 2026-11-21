@@ -4,7 +4,7 @@ GrantRadar Africa is a free platform for finding and tracking funding opportunit
 
 ## Status
 
-Phase 1 is complete: the domain schema, migrations, reference-data seeding, and source/opportunity admin are in place. Crawling and public discovery are later phases.
+Phase 2 is complete: scheduled Scrapy crawls, RSS/Atom, JSON API, HTML-list and sitemap adapters, compressed snapshots, and source health tracking are in place. Extraction and public discovery are later phases.
 
 ## Requirements
 
@@ -40,7 +40,14 @@ Phase 1 is complete: the domain schema, migrations, reference-data seeding, and 
    docker compose exec django uv run python manage.py load_sources
    ```
 
-7. Run checks locally with `uv sync --all-groups` followed by `make check`. Pytest uses an in-memory SQLite database; the application and Compose stack use PostgreSQL.
+7. For local Playwright-backed sources, install Chromium with `uv run playwright install chromium`.
+8. Run checks locally with `uv sync --all-groups` followed by `make check`. Pytest uses an in-memory SQLite database; the application and Compose stack use PostgreSQL.
+
+Celery Beat schedules enabled source crawls every 15 minutes; the configured crawl frequency determines which sources are due. To enable the separate Playwright worker for JavaScript-rendered sources:
+
+```powershell
+docker compose --profile crawler up --build
+```
 
 The optional Celery Flower dashboard is available with:
 

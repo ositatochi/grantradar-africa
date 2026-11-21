@@ -88,5 +88,9 @@ warn_unused_configs = true
 module = ["celery", "celery.*"]
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+module = ["apps.crawler.tasks"]
+disable_error_code = ["untyped-decorator"]
+
 [tool.django-stubs]
 django_settings_module = "grantradar.settings"
